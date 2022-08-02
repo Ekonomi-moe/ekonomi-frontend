@@ -165,6 +165,7 @@ const Tags = () => {
             <HStack spacing='4' p='4' pb='1'>
               {state.tags.map((tag, index) => (
                 <Tooltip
+                  key={index}
                   label={tag.error?.message ?? ''}
                   isDisabled={tag.error === undefined}
                   shouldWrapChildren>
