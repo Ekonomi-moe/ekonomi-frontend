@@ -21,6 +21,8 @@ import { GetImageTagResponse } from 'types/response'
 import Loading from 'components/loading'
 import ErrorAlert from 'components/errorAlert'
 import Link from 'next/link'
+import { TagsState, TagStatus } from 'types/tagsState'
+import FetchRetry from 'fetch-retry'
 
 const fetcher = async (url) => {
   const res = await fetch(url)
@@ -40,37 +42,109 @@ const fetcher = async (url) => {
   return res.json()
 }
 
+const initialState: TagsState = {
+  tags: [],
+  currentIndex: 0,
+  isLoading: true
+}
+
+const reducer = (
+  state: TagsState,
+  action: {
+    type: 'ADD_TAG_STATUS' | 'SET_LOADING' | 'SET_INDEX' | 'SET_BLUR'
+    tag?: TagStatus
+    index?: number
+    blur?: boolean
+    loading?: boolean
+  }
+) => {
+  switch (action.type) {
+    case 'ADD_TAG_STATUS':
+      if (action.tag) {
+        return {
+          ...state,
+          tags: [...state.tags, action.tag]
+        }
+      }
+      return state
+    case 'SET_LOADING':
+      return {
+        ...state,
+        isLoading: action.loading
+      }
+    case 'SET_INDEX':
+      if (action.index !== undefined) {
+        return {
+          ...state,
+          currentIndex: action.index
+        }
+      }
+      return state
+    case 'SET_BLUR':
+      if (state.tags[state.currentIndex].data) {
+        const tags = [...state.tags]
+        tags[state.currentIndex].data.blur = action.blur ?? false
+        return {
+          ...state,
+          tags
+        }
+      }
+      return state
+  }
+}
+
+// TODO: use `useReducer` and raw fetch
 const Tags = () => {
   const router = useRouter()
-  const { data, error } = useSWR(
-    `https://deepapi.ontdb.com/api/ddr?id=${router.query.id}`,
-    fetcher
-  )
-  const [blur, setBlur] = React.useState(false)
-  const { colorMode } = useColorMode()
+  const [state, dispatch] = React.useReducer(reducer, initialState)
   React.useEffect(() => {
-    if (data?.data?.rating === 'explicit' && !blur) {
-      setBlur(true)
+    if (!router.query.id) {
+      router.push('/')
     }
-  }, [data])
-  if (error && error.message !== 'LOADING') {
-    return (
-      <>
-        <NavBar />
-        <main>
-          <Center>
-            <ErrorAlert>
-              {error.toString() ??
-                data?.message ??
-                'Unknown error. Please try again later.'}
-            </ErrorAlert>
-          </Center>
-        </main>
-      </>
-    )
-  }
+    const ids = router.query.id.split(',')
+    const fetchRetry = FetchRetry(fetch)
+    ids.forEach(async (id) => {
+      const url = `https://deepapi.ontdb.com/api/ddr?id=${id}`
+      try {
+        const resp = await fetchRetry(url, {
+          retryOn: async (attempts, error, resp) => {
+            if (attempts > 10) {
+              return false
+            }
 
-  if (!data || error?.message === 'LOADING') {
+            if (error !== null || !resp.ok || resp.status === 202) {
+              return true
+            }
+          }
+        })
+        const data: GetImageTagResponse = await resp.json()
+        if (data.data) {
+          const result: TagStatus = {
+            data: {
+              ...data.data,
+              blur: data.data.rating === 'explicit'
+            }
+          }
+          dispatch({ type: 'ADD_TAG_STATUS', tag: result })
+        } else {
+          dispatch({
+            type: 'ADD_TAG_STATUS',
+            tag: { error: new Error(data.message) }
+          })
+        }
+      } catch (error) {
+        dispatch({ type: 'ADD_TAG_STATUS', tag: { error: error.message } })
+      }
+    })
+  }, [])
+  React.useEffect(() => {
+    if (state.tags.length >= router.query.id.split(',').length) {
+      dispatch({ type: 'SET_LOADING', loading: false })
+    }
+  }, [state.tags])
+  const { colorMode } = useColorMode()
+
+  if (state.isLoading) {
     return (
       <>
         <NavBar />
@@ -90,52 +164,85 @@ const Tags = () => {
         <Center>
           <Container maxW='container.lg'>
             <Heading size='xl'>Found your tags!</Heading>
+            <HStack spacing='4' p='4' pb='1'>
+              {state.tags.map((tag, index) => (
+                <Tooltip
+                  label={tag.error?.message ?? ''}
+                  isDisabled={tag.error === undefined}
+                  shouldWrapChildren>
+                  <Button
+                    key={index}
+                    colorScheme={tag.error ? 'red' : 'teal'}
+                    isDisabled={
+                      tag.error !== undefined || state.currentIndex === index
+                    }
+                    onClick={() => dispatch({ type: 'SET_INDEX', index })}>
+                    {index + 1}
+                  </Button>
+                </Tooltip>
+              ))}
+            </HStack>
             <HStack spacing='4' alignItems='normal' p='4'>
               <VStack>
                 <Image
                   fit='contain'
                   width='lg'
-                  src={`data:image/png;base64,${data.data.image}`}
-                  filter={blur ? 'blur(0.75rem)' : 'inherit'}
+                  src={`data:image/png;base64,${
+                    state.tags[state.currentIndex].data!.image
+                  }`}
+                  filter={
+                    state.tags[state.currentIndex].data!.blur
+                      ? 'blur(0.75rem)'
+                      : 'inherit'
+                  }
                 />
                 <Checkbox
-                  isChecked={blur}
-                  onChange={(e) => setBlur(e.target.checked)}>
+                  isChecked={state.tags[state.currentIndex].data!.blur}
+                  onChange={(e) =>
+                    dispatch({ type: 'SET_BLUR', blur: e.target.checked })
+                  }>
                   Blur Image
                 </Checkbox>
               </VStack>
               <VStack justifyContent='normal' alignItems='normal'>
                 <Text>Tags:</Text>
                 <div>
-                  {data.data.general.slice(0, 10).map((tag) => (
-                    <Tooltip
-                      label={`${tag[1].toFixed(3) * 100}%`}
-                      aria-label='confidence'
-                      key={tag[0]}
-                      hasArrow>
-                      <a
-                        href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
-                        key={tag[0]}>
-                        <Tag
-                          colorScheme='teal'
-                          key={tag[0]}
-                          m='1'
-                          cursor='pointer'
-                          _hover={{
-                            bg: colorMode === 'light' ? 'teal.50' : 'teal.700',
-                            transition: 'color 0.5s ease-in-out'
-                          }}
-                          transition='color 0.5s ease-in-out'>
-                          {tag[0]}
-                        </Tag>
-                      </a>
-                    </Tooltip>
-                  ))}
+                  {state.tags[state.currentIndex]
+                    .data!.general.slice(0, 10)
+                    .map((tag) => (
+                      <Tooltip
+                        label={`${(tag[1] * 100).toFixed(1)}%`}
+                        aria-label='confidence'
+                        key={tag[0]}
+                        hasArrow>
+                        <a
+                          href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
+                          key={tag[0]}>
+                          <Tag
+                            colorScheme='teal'
+                            key={tag[0]}
+                            m='1'
+                            cursor='pointer'
+                            _hover={{
+                              bg:
+                                colorMode === 'light' ? 'teal.50' : 'teal.700',
+                              transition: 'color 0.5s ease-in-out'
+                            }}
+                            transition='color 0.5s ease-in-out'>
+                            {tag[0]}
+                          </Tag>
+                        </a>
+                      </Tooltip>
+                    ))}
                 </div>
                 <Divider />
-                <Text>Character: {data.data.character}</Text>
+                <Text>
+                  Character: {state.tags[state.currentIndex].data!.character}
+                </Text>
                 <Divider />
-                <Text>Rating: {data.data.rating}</Text>
+                <Text>
+                  Rating: {state.tags[state.currentIndex].data!.rating}
+                </Text>
                 <Divider />
                 <Center>
                   <Link href='/'>

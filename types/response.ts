@@ -15,7 +15,7 @@ export interface Tag {
   general: [string, number][]
   character: string
   rating: 'safe' | 'questionable' | 'explicit'
-  img: string
+  image: string
   id: string
 }
 

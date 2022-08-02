@@ -32,7 +32,7 @@ const Index = ({}) => {
       if (json.status !== 200) {
         setError(json.message)
       } else {
-        router.push(`/tags?id=${json.data.id}`)
+        router.push(`/tags?id=${json.data.ok_list.join(',')}`)
       }
       setLoading(false)
     } catch (error) {
