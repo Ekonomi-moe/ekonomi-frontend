@@ -5,6 +5,7 @@ import { UploadImageResponse } from 'types/response'
 import { useRouter } from 'next/router'
 import Loading from 'components/loading'
 import ErrorAlert from 'components/errorAlert'
+import Footer from 'components/footer'
 
 const Index = ({}) => {
   const inputRef = React.useRef(null)
@@ -72,7 +73,7 @@ const Index = ({}) => {
     <>
       <NavBar />
       <main onDragEnter={onDrag}>
-        <Center>
+        <Center padding='4'>
           {loading ? (
             <Loading />
           ) : (
@@ -128,6 +129,7 @@ const Index = ({}) => {
           )}
         </Center>
       </main>
+      <Footer />
     </>
   )
 }

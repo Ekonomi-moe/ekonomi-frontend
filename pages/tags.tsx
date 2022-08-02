@@ -13,7 +13,8 @@ import {
   Tag,
   Checkbox,
   Button,
-  useColorMode
+  useColorMode,
+  Stack
 } from '@chakra-ui/react'
 import NavBar from 'components/navbar'
 import { GetImageTagResponse } from 'types/response'
@@ -21,6 +22,7 @@ import Loading from 'components/loading'
 import Link from 'next/link'
 import { TagsState, TagStatus } from 'types/tagsState'
 import FetchRetry from 'fetch-retry'
+import Footer from 'components/footer'
 
 const fetcher = async (url) => {
   const res = await fetch(url)
@@ -151,6 +153,7 @@ const Tags = () => {
             <Loading />
           </Center>
         </main>
+        <Footer />
       </>
     )
   }
@@ -181,7 +184,11 @@ const Tags = () => {
                 </Tooltip>
               ))}
             </HStack>
-            <HStack spacing='4' alignItems='normal' p='4'>
+            <Stack
+              spacing='4'
+              alignItems='normal'
+              p='4'
+              direction={['column', 'row']}>
               <VStack>
                 <Image
                   fit='contain'
@@ -249,10 +256,11 @@ const Tags = () => {
                   </Link>
                 </Center>
               </VStack>
-            </HStack>
+            </Stack>
           </Container>
         </Center>
       </main>
+      <Footer />
     </>
   )
 }
