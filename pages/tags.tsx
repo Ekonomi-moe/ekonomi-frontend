@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 import {
   Center,
   Container,
@@ -19,7 +18,6 @@ import {
 import NavBar from 'components/navbar'
 import { GetImageTagResponse } from 'types/response'
 import Loading from 'components/loading'
-import ErrorAlert from 'components/errorAlert'
 import Link from 'next/link'
 import { TagsState, TagStatus } from 'types/tagsState'
 import FetchRetry from 'fetch-retry'
@@ -101,7 +99,7 @@ const Tags = () => {
     if (!router.query.id) {
       router.push('/')
     }
-    const ids = router.query.id.split(',')
+    const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
       const url = `https://deepapi.ontdb.com/api/ddr?id=${id}`
@@ -138,7 +136,7 @@ const Tags = () => {
     })
   }, [])
   React.useEffect(() => {
-    if (state.tags.length >= router.query.id.split(',').length) {
+    if (state.tags.length >= (router.query.id as string).split(',').length) {
       dispatch({ type: 'SET_LOADING', loading: false })
     }
   }, [state.tags])

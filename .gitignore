@@ -42,3 +42,4 @@ package-lock.json
 **/*.bun
 /test_images
 /test.ts
+yarn.lock
