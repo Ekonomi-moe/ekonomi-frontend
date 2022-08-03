@@ -23,7 +23,7 @@ jobs:
         cache: 'npm'
     - name: Build and Make Static HTML
       run: npx next build |
-          npx next serve
+          npx next export
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
