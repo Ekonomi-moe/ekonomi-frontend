@@ -21,6 +21,8 @@ jobs:
       with:
         node-version: 16.x
         cache: 'npm'
+    - name: Install dependencies
+      run: npm install
     - name: Build and Make Static HTML
       run: |
         npx next build 
