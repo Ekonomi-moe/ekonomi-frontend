@@ -18,12 +18,6 @@ const NavBar = () => {
 
   return (
     <>
-      <Head>
-        <title>ekonomi</title>
-        <link rel='icon' href='/ekonomi.ico' sizes='any' />
-        <link rel='icon' href='/ekonomi.png' sizes='any' />
-        <link rel='icon' href='/ekonomi.svg' type='image/svg+xml' />
-      </Head>
       <nav>
         <Flex minWidth='max-content' p='4'>
           <Box p='2'>
