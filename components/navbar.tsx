@@ -6,15 +6,24 @@ import {
   IconButton,
   Img,
   useColorMode,
-  HStack
+  HStack,
+  Input,
+  InputGroup,
+  InputRightElement
 } from '@chakra-ui/react'
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { MoonIcon, SearchIcon, SunIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import React from 'react'
-import Head from 'next/head'
 
 const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
+  const inputRef = React.useRef<HTMLInputElement>(null)
+
+  const handleGetTag = () => {
+    if (inputRef.current) {
+      window.location.assign(`/tags?id=${inputRef.current.value}`)
+    }
+  }
 
   return (
     <>
@@ -29,11 +38,31 @@ const NavBar = () => {
             </Link>
           </Box>
           <Spacer />
-          <IconButton
-            aria-label='switch-theme'
-            icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
-            onClick={toggleColorMode}
-          />
+          <HStack spacing='4'>
+            <InputGroup>
+              <Input
+                ref={inputRef}
+                placeholder='Get by ID (comma separated)'
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    handleGetTag()
+                  }
+                }}
+              />
+              <InputRightElement>
+                <IconButton
+                  aria-label='Get by ID'
+                  icon={<SearchIcon />}
+                  onClick={handleGetTag}
+                />
+              </InputRightElement>
+            </InputGroup>
+            <IconButton
+              aria-label='switch-theme'
+              icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
+              onClick={toggleColorMode}
+            />
+          </HStack>
         </Flex>
       </nav>
     </>

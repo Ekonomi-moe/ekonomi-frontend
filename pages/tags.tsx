@@ -23,25 +23,6 @@ import Link from 'next/link'
 import { TagsState, TagStatus } from 'types/tagsState'
 import FetchRetry from 'fetch-retry'
 import Footer from 'components/footer'
-
-const fetcher = async (url) => {
-  const res = await fetch(url)
-
-  if (res.status === 202) {
-    const error = new Error('LOADING')
-    throw error
-  }
-  if (!res.ok) {
-    const error = new Error(
-      ((await res.json()) as GetImageTagResponse).message ??
-        'Unknown error. Please try again later.'
-    )
-    throw error
-  }
-
-  return res.json()
-}
-
 const initialState: TagsState = {
   tags: [],
   currentIndex: 0,
