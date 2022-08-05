@@ -8,7 +8,7 @@ const Footer = () => (
       <Center>
         <Text color='GrayText'>
           Made with ❤️ by{' '}
-          <Link href='https://github.com/EKonomi-moe'>
+          <Link href='https://github.com/Ekonomi-moe'>
             <Text
               as='span'
               color='teal.500'
@@ -18,7 +18,7 @@ const Footer = () => (
                 transition: 'color 150ms ease-in-out'
               }}
               transition='color 150ms ease-in-out'>
-              EKonomi-moe
+              Ekonomi-moe
             </Text>
           </Link>
         </Text>
