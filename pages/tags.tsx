@@ -104,7 +104,7 @@ const Tags = () => {
     const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
-      const url = `https://deepapi.ontdb.com/api/ddr?id=${id}`
+      const url = `https://api.ekonomi.moe/api/ddr?id=${id}`
       try {
         const resp = await fetchRetry(url, {
           retryOn: async (attempts, error, resp) => {
@@ -115,7 +115,8 @@ const Tags = () => {
             if (error !== null || !resp.ok || resp.status === 202) {
               return true
             }
-          }
+          },
+          retryDelay: 1000
         })
         const data: GetImageTagResponse = await resp.json()
         if (data.data) {

@@ -25,7 +25,7 @@ const Index = ({}) => {
       formdata.append('file', file)
     })
     try {
-      const resp = await fetch('https://deepapi.ontdb.com/api/ddr_bulk', {
+      const resp = await fetch('https://api.ekonomi.moe/api/ddr_bulk', {
         body: formdata,
         method: 'POST'
       })
