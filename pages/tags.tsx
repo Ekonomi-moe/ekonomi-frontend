@@ -32,7 +32,7 @@ const initialState: TagsState = {
 const reducer = (
   state: TagsState,
   action: {
-    type: 'ADD_TAG_STATUS' | 'SET_LOADING' | 'SET_INDEX' | 'SET_BLUR'
+    type: 'ADD_TAG_STATUS' | 'SET_LOADING' | 'SET_INDEX' | 'SET_BLUR' | 'RESET'
     tag?: TagStatus
     index?: number
     blur?: boolean
@@ -71,10 +71,11 @@ const reducer = (
         }
       }
       return state
+    case 'RESET':
+      return initialState
   }
 }
 
-// TODO: use `useReducer` and raw fetch
 const Tags = () => {
   const router = useRouter()
   const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -82,6 +83,7 @@ const Tags = () => {
     if (!router.query.id) {
       router.push('/')
     }
+    dispatch({ type: 'RESET' })
     const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
@@ -118,7 +120,7 @@ const Tags = () => {
         dispatch({ type: 'ADD_TAG_STATUS', tag: { error: error.message } })
       }
     })
-  }, [])
+  }, [router.query.id])
   React.useEffect(() => {
     if (state.tags.length >= (router.query.id as string).split(',').length) {
       dispatch({ type: 'SET_LOADING', loading: false })

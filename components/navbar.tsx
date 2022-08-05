@@ -14,14 +14,16 @@ import {
 import { MoonIcon, SearchIcon, SunIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import React from 'react'
+import { useRouter } from 'next/router'
 
 const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
+  const router = useRouter()
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   const handleGetTag = () => {
     if (inputRef.current) {
-      window.location.assign(`/tags?id=${inputRef.current.value}`)
+      router.push(`/tags?id=${inputRef.current.value}`)
     }
   }
 
