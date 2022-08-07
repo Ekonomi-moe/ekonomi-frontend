@@ -14,7 +14,8 @@ import {
   Checkbox,
   Button,
   useColorMode,
-  Stack
+  Stack,
+  Box
 } from '@chakra-ui/react'
 import NavBar from 'components/navbar'
 import { GetImageTagResponse } from 'types/response'
@@ -168,79 +169,141 @@ const Tags = () => {
                 </Tooltip>
               ))}
             </HStack>
-            <Stack
-              spacing='4'
-              alignItems='normal'
-              p='4'
-              direction={['column', 'row']}>
-              <VStack>
-                <Image
-                  fit='contain'
-                  width='lg'
-                  src={`data:image/png;base64,${
-                    state.tags[state.currentIndex].data!.image
-                  }`}
-                  filter={
-                    state.tags[state.currentIndex].data!.blur
-                      ? 'blur(0.75rem)'
-                      : 'inherit'
-                  }
-                />
-                <Checkbox
-                  isChecked={state.tags[state.currentIndex].data!.blur}
-                  onChange={(e) =>
-                    dispatch({ type: 'SET_BLUR', blur: e.target.checked })
-                  }>
-                  Blur Image
-                </Checkbox>
-              </VStack>
-              <VStack justifyContent='normal' alignItems='normal'>
-                <Text>Tags:</Text>
-                <div>
-                  {state.tags[state.currentIndex]
-                    .data!.general.slice(0, 10)
-                    .map((tag) => (
-                      <Tooltip
-                        label={`${(tag[1] * 100).toFixed(1)}%`}
-                        aria-label='confidence'
-                        key={tag[0]}
-                        hasArrow>
-                        <a
-                          href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
-                          key={tag[0]}>
-                          <Tag
-                            colorScheme='teal'
+            <VStack>
+              <Stack
+                spacing='4'
+                alignItems='normal'
+                p='4'
+                direction={['column', 'row']}>
+                <VStack>
+                  <Image
+                    fit='contain'
+                    width='lg'
+                    src={`data:image/png;base64,${
+                      state.tags[state.currentIndex].data!.image
+                    }`}
+                    filter={
+                      state.tags[state.currentIndex].data!.blur
+                        ? 'blur(0.75rem)'
+                        : 'inherit'
+                    }
+                  />
+                  <Checkbox
+                    isChecked={state.tags[state.currentIndex].data!.blur}
+                    onChange={(e) =>
+                      dispatch({ type: 'SET_BLUR', blur: e.target.checked })
+                    }>
+                    Blur Image
+                  </Checkbox>
+                </VStack>
+                <VStack justifyContent='normal' alignItems='normal'>
+                  <Text>Tags:</Text>
+                  <div>
+                    {state.tags[state.currentIndex]
+                      .data!.general.slice(0, 10)
+                      .map((tag) => (
+                        <Tooltip
+                          label={`${(tag[1] * 100).toFixed(1)}%`}
+                          aria-label='confidence'
+                          key={tag[0]}
+                          hasArrow>
+                          <a
+                            href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
+                            key={tag[0]}>
+                            <Tag
+                              colorScheme='teal'
+                              key={tag[0]}
+                              m='1'
+                              cursor='pointer'
+                              _hover={{
+                                bg:
+                                  colorMode === 'light'
+                                    ? 'teal.50'
+                                    : 'teal.700',
+                                transition: 'color 0.5s ease-in-out'
+                              }}
+                              transition='color 0.5s ease-in-out'>
+                              {tag[0]}
+                            </Tag>
+                          </a>
+                        </Tooltip>
+                      ))}
+                  </div>
+                  <Divider />
+                  <Text>
+                    Character: {state.tags[state.currentIndex].data!.character}
+                  </Text>
+                  <Divider />
+                  <Text>
+                    Rating: {state.tags[state.currentIndex].data!.rating}
+                  </Text>
+                  <Divider />
+                  <Center display={['none', 'flex']}>
+                    <Link href='/'>
+                      <Button>Go back to Home</Button>
+                    </Link>
+                  </Center>
+                </VStack>
+              </Stack>
+              {state.tags.length > 1 && (
+                <Box maxW='lg' p='4' pt={[0, 4]}>
+                  <Text p='1'>Overall Tags:</Text>
+                  <Box>
+                    {(() => {
+                      const tags = state.tags.map((tag) => tag.data!.general)
+                      const flatTags = tags.reduce(
+                        (prev, curr) => prev.concat(curr),
+                        []
+                      )
+                      const tagCounts: { [key: string]: number } =
+                        flatTags.reduce((prev, curr) => {
+                          if (prev[curr[0]] === undefined) {
+                            prev[curr[0]] = curr[1] / tags.length
+                          } else {
+                            prev[curr[0]] += curr[1] / tags.length
+                          }
+                          return prev
+                        }, {})
+                      return Object.entries(tagCounts)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 10)
+                        .map((tag) => (
+                          <Tooltip
+                            label={`${(tag[1] * 100).toFixed(1)}%`}
+                            aria-label='confidence'
                             key={tag[0]}
-                            m='1'
-                            cursor='pointer'
-                            _hover={{
-                              bg:
-                                colorMode === 'light' ? 'teal.50' : 'teal.700',
-                              transition: 'color 0.5s ease-in-out'
-                            }}
-                            transition='color 0.5s ease-in-out'>
-                            {tag[0]}
-                          </Tag>
-                        </a>
-                      </Tooltip>
-                    ))}
-                </div>
-                <Divider />
-                <Text>
-                  Character: {state.tags[state.currentIndex].data!.character}
-                </Text>
-                <Divider />
-                <Text>
-                  Rating: {state.tags[state.currentIndex].data!.rating}
-                </Text>
-                <Divider />
-                <Center>
-                  <Link href='/'>
-                    <Button>Go back to Home</Button>
-                  </Link>
-                </Center>
-              </VStack>
-            </Stack>
+                            hasArrow>
+                            <a
+                              href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
+                              key={tag[0]}>
+                              <Tag
+                                colorScheme='teal'
+                                key={tag[0]}
+                                m='1'
+                                cursor='pointer'
+                                _hover={{
+                                  bg:
+                                    colorMode === 'light'
+                                      ? 'teal.50'
+                                      : 'teal.700',
+                                  transition: 'color 0.5s ease-in-out'
+                                }}
+                                transition='color 0.5s ease-in-out'>
+                                {tag[0]}
+                              </Tag>
+                            </a>
+                          </Tooltip>
+                        ))
+                    })()}
+                  </Box>
+                </Box>
+              )}
+              <Center display={['flex', 'none']}>
+                <Link href='/'>
+                  <Button>Go back to Home</Button>
+                </Link>
+              </Center>
+            </VStack>
           </Container>
         </Center>
       </main>
