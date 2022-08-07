@@ -88,7 +88,7 @@ const Tags = () => {
     const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
-      const url = `https://api.ekonomi.moe/api/ddr?id=${id}`
+      const url = `https://devapi.ekonomi.moe/api/ddr?id=${id}`
       try {
         const resp = await fetchRetry(url, {
           retryOn: async (attempts, error, resp) => {
