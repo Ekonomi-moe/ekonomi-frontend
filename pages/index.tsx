@@ -7,7 +7,7 @@ import Loading from 'components/loading'
 import ErrorAlert from 'components/errorAlert'
 import Footer from 'components/footer'
 
-const Index = ({}) => {
+const Index = ({ isDev }: { isDev: boolean }) => {
   const inputRef = React.useRef(null)
   const router = useRouter()
   const [dragActived, setDragActive] = React.useState(false)
@@ -25,10 +25,15 @@ const Index = ({}) => {
       formdata.append('file', file)
     })
     try {
-      const resp = await fetch('https://devapi.ekonomi.moe/api/ddr_bulk', {
-        body: formdata,
-        method: 'POST'
-      })
+      const resp = await fetch(
+        `${
+          isDev ? 'https://devapi.ekonomi.moe' : 'https://api.ekonomi.moe'
+        }/api/ddr_bulk`,
+        {
+          body: formdata,
+          method: 'POST'
+        }
+      )
       const json: UploadImageResponse = await resp.json()
       if (json.status !== 200) {
         setError(json.message)
@@ -132,6 +137,14 @@ const Index = ({}) => {
       <Footer />
     </>
   )
+}
+
+export const getStaticProps = async () => {
+  return {
+    props: {
+      isDev: process.env.NODE_ENV === 'development'
+    }
+  }
 }
 
 export default Index

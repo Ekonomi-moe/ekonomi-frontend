@@ -77,7 +77,7 @@ const reducer = (
   }
 }
 
-const Tags = () => {
+const Tags = ({ isDev }: { isDev: boolean }) => {
   const router = useRouter()
   const [state, dispatch] = React.useReducer(reducer, initialState)
   React.useEffect(() => {
@@ -88,7 +88,9 @@ const Tags = () => {
     const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
-      const url = `https://devapi.ekonomi.moe/api/ddr?id=${id}`
+      const url = `${
+        isDev ? 'https://devapi.ekonomi.moe' : 'https://api.ekonomi.moe'
+      }/api/ddr?id=${id}`
       try {
         const resp = await fetchRetry(url, {
           retryOn: async (attempts, error, resp) => {
@@ -310,6 +312,14 @@ const Tags = () => {
       <Footer />
     </>
   )
+}
+
+export const getStaticProps = async () => {
+  return {
+    props: {
+      isDev: process.env.NODE_ENV === 'development'
+    }
+  }
 }
 
 export default Tags
