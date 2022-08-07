@@ -1,4 +1,4 @@
-import { Heading, Text, Button, VStack, Center } from '@chakra-ui/react'
+import { Heading, Text, Button, VStack, Center, Box } from '@chakra-ui/react'
 import React from 'react'
 import NavBar from 'components/navbar'
 import { UploadImageResponse } from 'types/response'
@@ -100,7 +100,7 @@ const Index = ({}) => {
                 <Text fontSize='xl'>
                   {dragActived ? 'Drop!' : 'Drag and Drop'}
                 </Text>
-                {dragActived ? null : <Text fontSize='xl'>or</Text>}
+                <Text fontSize='xl'>{dragActived ? '\u00a0' : 'or'}</Text>
                 <Button
                   onClick={() => inputRef.current.click()}
                   disabled={dragActived}>
