@@ -73,7 +73,7 @@ const Index = ({}) => {
     <>
       <NavBar />
       <main onDragEnter={onDrag}>
-        <Center padding='4'>
+        <Center>
           {loading ? (
             <Loading />
           ) : (

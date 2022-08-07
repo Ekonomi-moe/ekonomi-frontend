@@ -134,7 +134,7 @@ const Tags = () => {
       <>
         <NavBar />
         <main>
-          <Center p='4'>
+          <Center>
             <Loading />
           </Center>
         </main>

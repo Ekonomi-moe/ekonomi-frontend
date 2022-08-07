@@ -4,7 +4,7 @@ import React from 'react'
 
 const Footer = () => (
   <footer>
-    <Container maxW='container.lg'>
+    <Container maxW='container.lg' p='4'>
       <Center>
         <Text color='GrayText'>
           Made with ❤️ by{' '}
