@@ -9,9 +9,13 @@ import {
   HStack,
   Input,
   InputGroup,
-  InputRightElement
+  InputRightElement,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem
 } from '@chakra-ui/react'
-import { MoonIcon, SearchIcon, SunIcon } from '@chakra-ui/icons'
+import { HamburgerIcon, MoonIcon, SearchIcon, SunIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import React from 'react'
 import { useRouter } from 'next/router'
@@ -40,31 +44,62 @@ const NavBar = () => {
             </Link>
           </Box>
           <Spacer />
-          <HStack spacing='4'>
-            <InputGroup>
-              <Input
-                ref={inputRef}
-                placeholder='Get by ID (comma separated)'
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    handleGetTag()
-                  }
-                }}
-              />
-              <InputRightElement>
-                <IconButton
-                  aria-label='Get by ID'
-                  icon={<SearchIcon />}
-                  onClick={handleGetTag}
+          <Box>
+            <HStack spacing='4' display={['none', 'flex']}>
+              <InputGroup>
+                <Input
+                  ref={inputRef}
+                  placeholder='Get by ID (comma separated)'
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      handleGetTag()
+                    }
+                  }}
                 />
-              </InputRightElement>
-            </InputGroup>
-            <IconButton
-              aria-label='switch-theme'
-              icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
-              onClick={toggleColorMode}
-            />
-          </HStack>
+                <InputRightElement onClick={handleGetTag} cursor='pointer'>
+                  <SearchIcon />
+                </InputRightElement>
+              </InputGroup>
+              <IconButton
+                aria-label='switch-theme'
+                icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
+                onClick={toggleColorMode}
+              />
+            </HStack>
+            <Menu closeOnSelect={false}>
+              <MenuButton
+                as={IconButton}
+                aria-label='Options'
+                icon={<HamburgerIcon />}
+                variant='outline'
+                display={[null, 'none']}
+              />
+              <MenuList>
+                <MenuItem>
+                  <InputGroup>
+                    <Input
+                      ref={inputRef}
+                      placeholder='Get by ID (comma separated)'
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          handleGetTag()
+                        }
+                      }}
+                      onClick={(event) => event.stopPropagation()}
+                    />
+                    <InputRightElement onClick={handleGetTag}>
+                      <SearchIcon />
+                    </InputRightElement>
+                  </InputGroup>
+                </MenuItem>
+                <MenuItem
+                  icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
+                  onClick={toggleColorMode}>
+                  Toggle Theme
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
         </Flex>
       </nav>
     </>

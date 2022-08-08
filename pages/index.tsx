@@ -1,4 +1,12 @@
-import { Heading, Text, Button, VStack, Center, Box } from '@chakra-ui/react'
+import {
+  Heading,
+  Text,
+  Button,
+  VStack,
+  Center,
+  Box,
+  Container
+} from '@chakra-ui/react'
 import React from 'react'
 import NavBar from 'components/navbar'
 import { UploadImageResponse } from 'types/response'
@@ -82,13 +90,15 @@ const Index = ({ isDev }: { isDev: boolean }) => {
           {loading ? (
             <Loading />
           ) : (
-            <VStack maxW='container.lg' spacing='4'>
+            <Container maxW='container.lg'>
               {error ? (
                 <ErrorAlert>
                   {error.toString() ?? 'Unknown error. Please try again later.'}
                 </ErrorAlert>
               ) : null}
-              <Heading size='xl'>Upload your image, get your tags.</Heading>
+              <Heading size='xl' pb='4'>
+                Upload your image, get your tags.
+              </Heading>
               <VStack
                 borderWidth='1px'
                 borderRadius='lg'
@@ -130,7 +140,7 @@ const Index = ({ isDev }: { isDev: boolean }) => {
                   />
                 )}
               </VStack>
-            </VStack>
+            </Container>
           )}
         </Center>
       </main>
