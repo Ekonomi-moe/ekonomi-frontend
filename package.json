@@ -14,12 +14,12 @@
     "react": "^18",
     "react-dom": "^18",
     "react-is": "^17.0.2",
-    "swr": "^1.3.0"
+    "swr": "^1.3.0",
+    "typescript": "latest",
+    "@types/react": "18.0.1"
   },
   "devDependencies": {
-    "@types/react": "18.0.1",
     "bun-framework-next": "^12",
-    "react-refresh": "0.10.0",
-    "typescript": "latest"
+    "react-refresh": "0.10.0"
   }
 }
