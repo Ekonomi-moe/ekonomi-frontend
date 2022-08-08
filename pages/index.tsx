@@ -86,63 +86,65 @@ const Index = ({ isDev }: { isDev: boolean }) => {
     <>
       <NavBar />
       <main onDragEnter={onDrag}>
-        <Center>
-          {loading ? (
+        {loading ? (
+          <Center>
             <Loading />
-          ) : (
-            <Container maxW='container.lg'>
-              {error ? (
-                <ErrorAlert>
-                  {error.toString() ?? 'Unknown error. Please try again later.'}
-                </ErrorAlert>
-              ) : null}
+          </Center>
+        ) : (
+          <Container maxW='container.lg'>
+            {error ? (
+              <ErrorAlert>
+                {error.toString() ?? 'Unknown error. Please try again later.'}
+              </ErrorAlert>
+            ) : null}
+            <Center>
               <Heading size='xl' pb='4'>
                 Upload your image, get your tags.
               </Heading>
-              <VStack
-                borderWidth='1px'
-                borderRadius='lg'
-                padding='4'
-                width='full'>
-                <input
-                  ref={inputRef}
-                  type='file'
-                  onChange={onClickSubmit}
-                  style={{ display: 'none' }}
-                  accept='image/*'
-                  multiple
+            </Center>
+            <VStack
+              borderWidth='1px'
+              borderRadius='lg'
+              padding='4'
+              width='full'>
+              <input
+                ref={inputRef}
+                type='file'
+                onChange={onClickSubmit}
+                style={{ display: 'none' }}
+                accept='image/*'
+                multiple
+              />
+              <Text fontSize='xl'>
+                {dragActived ? 'Drop!' : 'Drag and Drop'}
+              </Text>
+              <Text fontSize='xl'>{dragActived ? '\u00a0' : 'or'}</Text>
+              <Button
+                onClick={() => inputRef.current.click()}
+                disabled={dragActived}>
+                Upload
+              </Button>
+              <Text fontSize='sm' color='GrayText'>
+                Maximum 5 files at once.
+              </Text>
+              {dragActived && (
+                <div
+                  onDragEnter={onDrag}
+                  onDragLeave={onDrag}
+                  onDragOver={onDrag}
+                  onDrop={onDrop}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    top: 0,
+                    left: 0
+                  }}
                 />
-                <Text fontSize='xl'>
-                  {dragActived ? 'Drop!' : 'Drag and Drop'}
-                </Text>
-                <Text fontSize='xl'>{dragActived ? '\u00a0' : 'or'}</Text>
-                <Button
-                  onClick={() => inputRef.current.click()}
-                  disabled={dragActived}>
-                  Upload
-                </Button>
-                <Text fontSize='sm' color='GrayText'>
-                  Maximum 5 files at once.
-                </Text>
-                {dragActived && (
-                  <div
-                    onDragEnter={onDrag}
-                    onDragLeave={onDrag}
-                    onDragOver={onDrag}
-                    onDrop={onDrop}
-                    style={{
-                      position: 'absolute',
-                      width: '100%',
-                      height: '100%',
-                      top: 0,
-                      left: 0
-                    }}
-                  />
-                )}
-              </VStack>
-            </Container>
-          )}
-        </Center>
+              )}
+            </VStack>
+          </Container>
+        )}
       </main>
       <Footer />
     </>
