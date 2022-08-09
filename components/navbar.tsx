@@ -24,10 +24,18 @@ const NavBar = () => {
   const { colorMode, toggleColorMode } = useColorMode()
   const router = useRouter()
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const mobileInputRef = React.useRef<HTMLInputElement>(null)
 
   const handleGetTag = () => {
     if (inputRef.current) {
+      console.log(inputRef.current.value)
       router.push(`/tags?id=${inputRef.current.value}`)
+    }
+  }
+
+  const handleGetTagOnMobile = () => {
+    if (mobileInputRef.current) {
+      router.push(`/tags?id=${mobileInputRef.current.value}`)
     }
   }
 
@@ -78,16 +86,11 @@ const NavBar = () => {
                 <MenuItem>
                   <InputGroup>
                     <Input
-                      ref={inputRef}
+                      ref={mobileInputRef}
                       placeholder='Get by ID (comma separated)'
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          handleGetTag()
-                        }
-                      }}
                       onClick={(event) => event.stopPropagation()}
                     />
-                    <InputRightElement onClick={handleGetTag}>
+                    <InputRightElement onClick={handleGetTagOnMobile}>
                       <SearchIcon />
                     </InputRightElement>
                   </InputGroup>
