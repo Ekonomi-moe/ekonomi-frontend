@@ -26,16 +26,9 @@ const NavBar = () => {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const mobileInputRef = React.useRef<HTMLInputElement>(null)
 
-  const handleGetTag = () => {
-    if (inputRef.current) {
-      console.log(inputRef.current.value)
-      router.push(`/tags?id=${inputRef.current.value}`)
-    }
-  }
-
-  const handleGetTagOnMobile = () => {
-    if (mobileInputRef.current) {
-      router.push(`/tags?id=${mobileInputRef.current.value}`)
+  const handleGetTag = (ref: React.MutableRefObject<HTMLInputElement>) => {
+    if (ref.current) {
+      router.push(`/tags?id=${ref.current.value}`)
     }
   }
 
@@ -60,11 +53,13 @@ const NavBar = () => {
                   placeholder='Get by ID (comma separated)'
                   onKeyDown={(event) => {
                     if (event.key === 'Enter') {
-                      handleGetTag()
+                      handleGetTag(inputRef)
                     }
                   }}
                 />
-                <InputRightElement onClick={handleGetTag} cursor='pointer'>
+                <InputRightElement
+                  onClick={() => handleGetTag(inputRef)}
+                  cursor='pointer'>
                   <SearchIcon />
                 </InputRightElement>
               </InputGroup>
@@ -90,7 +85,8 @@ const NavBar = () => {
                       placeholder='Get by ID (comma separated)'
                       onClick={(event) => event.stopPropagation()}
                     />
-                    <InputRightElement onClick={handleGetTagOnMobile}>
+                    <InputRightElement
+                      onClick={() => handleGetTag(mobileInputRef)}>
                       <SearchIcon />
                     </InputRightElement>
                   </InputGroup>
