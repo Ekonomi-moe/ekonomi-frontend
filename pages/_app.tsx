@@ -13,11 +13,7 @@ const MyApp = ({ Component, pageProps }) => {
         <meta property='og:title' content='Ekonomi' />
         <meta property='og:type' content='website' />
         <meta property='og:url' content='https://ekonomi.moe' />
-        <meta property='og:image' content='https://ekonomi.moe/ekonomi.svg' />
-        <meta
-          property='og:image:alt'
-          content='https://ekonomi.moe/ekonomi.png'
-        />
+        <meta property='og:image' content='https://ekonomi.moe/ekonomi.png' />
         <meta
           property='og:description'
           content='Upload your image, get your tags.'
