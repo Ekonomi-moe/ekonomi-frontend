@@ -6,10 +6,20 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <ChakraProvider theme={theme}>
       <Head>
-        <title>ekonomi</title>
+        <title>Ekonomi</title>
         <link rel='icon' href='/ekonomi.ico' sizes='any' />
         <link rel='icon' href='/ekonomi.png' sizes='any' />
         <link rel='icon' href='/ekonomi.svg' type='image/svg+xml' />
+        <meta property='og:title' content='Ekonomi' />
+        <meta property='og:type' content='website' />
+        <meta property='og:url' content='https://ekonomi.moe' />
+        <meta property='og:image' content='https://ekonomi.moe/ekonomi.png' />
+        <meta
+          property='og:description'
+          content='Upload your image, get your tags.'
+        />
+        <meta property='og:image:width' content='1024' />
+        <meta property='og:image:height' content='1024' />
       </Head>
       <Component {...pageProps} />
     </ChakraProvider>
