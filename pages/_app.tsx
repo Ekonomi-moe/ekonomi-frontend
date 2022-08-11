@@ -13,13 +13,28 @@ const MyApp = ({ Component, pageProps }) => {
         <meta property='og:title' content='Ekonomi' />
         <meta property='og:type' content='website' />
         <meta property='og:url' content='https://ekonomi.moe' />
-        <meta property='og:image' content='https://ekonomi.moe/ekonomi.png' />
+        <meta property='og:image' content='https://ekonomi.moe/ekonomi.svg' />
+        <meta
+          property='og:image:alt'
+          content='https://ekonomi.moe/ekonomi.png'
+        />
         <meta
           property='og:description'
           content='Upload your image, get your tags.'
         />
+        <meta name='description' content='Upload your image, get your tags.' />
         <meta property='og:image:width' content='1024' />
         <meta property='og:image:height' content='1024' />
+        <meta
+          name='theme-color'
+          media='(prefers-color-scheme: light)'
+          content='white'
+        />
+        <meta
+          name='theme-color'
+          media='(prefers-color-scheme: dark)'
+          content='#1A202C'
+        />
       </Head>
       <Component {...pageProps} />
     </ChakraProvider>
