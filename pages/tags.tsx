@@ -95,7 +95,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
       try {
         const resp = await fetchRetry(url, {
           retryOn: async (attempts, error, resp) => {
-            if (attempts > 10) {
+            if (attempts > 10 || resp.status === 404) {
               return false
             }
 
@@ -115,13 +115,20 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
           }
           dispatch({ type: 'ADD_TAG_STATUS', tag: result })
         } else {
-          dispatch({
-            type: 'ADD_TAG_STATUS',
-            tag: { error: new Error(data.message) }
-          })
+          if (resp.status === 404) {
+            dispatch({
+              type: 'ADD_TAG_STATUS',
+              tag: { error: new Error('Image not found') }
+            })
+          } else {
+            dispatch({
+              type: 'ADD_TAG_STATUS',
+              tag: { error: new Error(data.message) }
+            })
+          }
         }
       } catch (error) {
-        dispatch({ type: 'ADD_TAG_STATUS', tag: { error: error.message } })
+        dispatch({ type: 'ADD_TAG_STATUS', tag: { error } })
       }
     })
   }, [router.query.id])
