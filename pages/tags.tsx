@@ -133,7 +133,10 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
     })
   }, [router.query.id])
   React.useEffect(() => {
-    if (state.tags.length >= (router.query.id as string).split(',').length) {
+    if (
+      state.isLoading &&
+      state.tags.length >= (router.query.id as string).split(',').length
+    ) {
       const index = state.tags.findIndex((tag) => !tag.error)
       if (index !== -1) {
         dispatch({ type: 'SET_INDEX', index })
