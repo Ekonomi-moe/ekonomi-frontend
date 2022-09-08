@@ -6,7 +6,7 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <ChakraProvider theme={theme}>
       <Head>
-        <title>Ekonomi</title>
+        <title>Upload your image, get your tags. - Ekonomi</title>
         <link rel='icon' href='/ekonomi.ico' sizes='any' />
         <link rel='icon' href='/ekonomi.png' sizes='any' />
         <link rel='icon' href='/ekonomi.svg' type='image/svg+xml' />
