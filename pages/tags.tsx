@@ -28,13 +28,20 @@ import ErrorAlert from 'components/errorAlert'
 const initialState: TagsState = {
   tags: [],
   currentIndex: 0,
-  isLoading: true
+  isLoading: true,
+  showMore: false
 }
 
 const reducer = (
   state: TagsState,
   action: {
-    type: 'ADD_TAG_STATUS' | 'SET_LOADING' | 'SET_INDEX' | 'SET_BLUR' | 'RESET'
+    type:
+      | 'ADD_TAG_STATUS'
+      | 'SET_LOADING'
+      | 'SET_INDEX'
+      | 'SET_BLUR'
+      | 'RESET'
+      | 'SHOW_MORE'
     tag?: TagStatus
     index?: number
     blur?: boolean
@@ -75,6 +82,11 @@ const reducer = (
       return state
     case 'RESET':
       return initialState
+    case 'SHOW_MORE':
+      return {
+        ...state,
+        showMore: true
+      }
   }
 }
 
@@ -221,38 +233,60 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                       Blur Image
                     </Checkbox>
                   </VStack>
-                  <VStack justifyContent='normal' alignItems='normal'>
+                  <VStack
+                    justifyContent='normal'
+                    alignItems='normal'
+                    maxW='50%'>
                     <Text>Tags:</Text>
                     <div>
-                      {state.tags[state.currentIndex]
-                        .data!.general.slice(0, 10)
-                        .map((tag) => (
-                          <Tooltip
-                            label={`${(tag[1] * 100).toFixed(1)}%`}
-                            aria-label='confidence'
-                            key={tag[0]}
-                            hasArrow>
-                            <a
-                              href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
-                              key={tag[0]}>
-                              <Tag
-                                colorScheme='teal'
-                                key={tag[0]}
-                                m='1'
-                                cursor='pointer'
-                                _hover={{
-                                  bg:
-                                    colorMode === 'light'
-                                      ? 'teal.50'
-                                      : 'teal.700',
-                                  transition: 'color 0.5s ease-in-out'
-                                }}
-                                transition='color 0.5s ease-in-out'>
-                                {tag[0]}
-                              </Tag>
-                            </a>
-                          </Tooltip>
-                        ))}
+                      {(state.showMore
+                        ? state.tags[state.currentIndex].data!.general.filter(
+                            (tag) => tag[1] > 0.5
+                          )
+                        : state.tags[state.currentIndex].data!.general.slice(
+                            0,
+                            10
+                          )
+                      ).map((tag) => (
+                        <Tooltip
+                          label={`${(tag[1] * 100).toFixed(1)}%`}
+                          aria-label='confidence'
+                          key={tag[0]}
+                          hasArrow>
+                          <a
+                            href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
+                            key={tag[0]}>
+                            <Tag
+                              colorScheme='teal'
+                              key={tag[0]}
+                              m='1'
+                              cursor='pointer'
+                              _hover={{
+                                bg:
+                                  colorMode === 'light'
+                                    ? 'teal.50'
+                                    : 'teal.700',
+                                transition: 'color 0.5s ease-in-out'
+                              }}
+                              transition='color 0.5s ease-in-out'>
+                              {tag[0]}
+                            </Tag>
+                          </a>
+                        </Tooltip>
+                      ))}
+                      {state.tags[state.currentIndex].data!.general.length >
+                        10 &&
+                        state.tags[state.currentIndex].data!.general.filter(
+                          (tag) => tag[1] > 0.5
+                        ).length > 10 &&
+                        !state.showMore && (
+                          <Button
+                            size='xs'
+                            onClick={() => dispatch({ type: 'SHOW_MORE' })}
+                            m='1'>
+                            Show more...
+                          </Button>
+                        )}
                     </div>
                     <Divider />
                     <Text>
