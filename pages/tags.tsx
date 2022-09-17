@@ -378,7 +378,9 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
 export const getStaticProps = async () => {
   return {
     props: {
-      isDev: process.env.NODE_ENV === 'development'
+      isDev:
+        process.env.NODE_ENV === 'development' ||
+        process.env.DEVELOPMENT_MODE === '1'
     }
   }
 }
