@@ -1,5 +1,7 @@
 # Ekonomi
 
+[[Discord]](https://discord.gg/fPsRMgR3xy)
+
 Upload your images, get your tags.
 
 ## ToC
