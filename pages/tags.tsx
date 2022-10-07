@@ -295,10 +295,36 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                         )}
                     </div>
                     <Divider />
-                    <Text>
-                      Character:{' '}
-                      {state.tags[state.currentIndex].data!.character}
-                    </Text>
+                    <Text>Character:</Text>
+                    <div>
+                      {state.tags[state.currentIndex].data!.character.length ===
+                      0
+                        ? 'Not sure...'
+                        : state.tags[state.currentIndex].data!.character.map(
+                            (character) => (
+                              <Tooltip
+                                label={`${(character[1] * 100).toFixed(1)}%`}
+                                aria-label='confidence'
+                                key={character[0]}
+                                hasArrow>
+                                <Tag
+                                  colorScheme='teal'
+                                  key={character[0]}
+                                  m='1'
+                                  _hover={{
+                                    bg:
+                                      colorMode === 'light'
+                                        ? 'teal.50'
+                                        : 'teal.700',
+                                    transition: 'color 0.5s ease-in-out'
+                                  }}
+                                  transition='color 0.5s ease-in-out'>
+                                  {character[0]}
+                                </Tag>
+                              </Tooltip>
+                            )
+                          )}
+                    </div>
                     <Divider />
                     <Text>
                       Rating: {state.tags[state.currentIndex].data!.rating}
