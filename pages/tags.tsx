@@ -217,7 +217,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                       fit='contain'
                       width='lg'
                       src={
-                        state.tags[state.currentIndex].data?.image.length === 0
+                        state.tags[state.currentIndex].data?.image === undefined
                           ? `https://img.ekonomi.moe/${
                               state.tags[state.currentIndex].data!.id
                             }.png`
