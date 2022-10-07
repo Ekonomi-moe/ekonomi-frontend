@@ -28,13 +28,20 @@ import ErrorAlert from 'components/errorAlert'
 const initialState: TagsState = {
   tags: [],
   currentIndex: 0,
-  isLoading: true
+  isLoading: true,
+  showMore: false
 }
 
 const reducer = (
   state: TagsState,
   action: {
-    type: 'ADD_TAG_STATUS' | 'SET_LOADING' | 'SET_INDEX' | 'SET_BLUR' | 'RESET'
+    type:
+      | 'ADD_TAG_STATUS'
+      | 'SET_LOADING'
+      | 'SET_INDEX'
+      | 'SET_BLUR'
+      | 'RESET'
+      | 'SHOW_MORE'
     tag?: TagStatus
     index?: number
     blur?: boolean
@@ -75,6 +82,11 @@ const reducer = (
       return state
     case 'RESET':
       return initialState
+    case 'SHOW_MORE':
+      return {
+        ...state,
+        showMore: true
+      }
   }
 }
 
@@ -204,9 +216,15 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                     <Image
                       fit='contain'
                       width='lg'
-                      src={`data:image/png;base64,${
-                        state.tags[state.currentIndex].data!.image
-                      }`}
+                      src={
+                        state.tags[state.currentIndex].data?.image.length === 0
+                          ? `https://img.ekonomi.moe/${
+                              state.tags[state.currentIndex].data!.id
+                            }.png`
+                          : `data:image/png;base64,${
+                              state.tags[state.currentIndex].data!.image
+                            }`
+                      }
                       filter={
                         state.tags[state.currentIndex].data!.blur
                           ? 'blur(0.75rem)'
@@ -221,44 +239,92 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                       Blur Image
                     </Checkbox>
                   </VStack>
-                  <VStack justifyContent='normal' alignItems='normal'>
+                  <VStack
+                    justifyContent='normal'
+                    alignItems='normal'
+                    maxW='50%'>
                     <Text>Tags:</Text>
                     <div>
-                      {state.tags[state.currentIndex]
-                        .data!.general.slice(0, 10)
-                        .map((tag) => (
-                          <Tooltip
-                            label={`${(tag[1] * 100).toFixed(1)}%`}
-                            aria-label='confidence'
-                            key={tag[0]}
-                            hasArrow>
-                            <a
-                              href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
-                              key={tag[0]}>
-                              <Tag
-                                colorScheme='teal'
-                                key={tag[0]}
-                                m='1'
-                                cursor='pointer'
-                                _hover={{
-                                  bg:
-                                    colorMode === 'light'
-                                      ? 'teal.50'
-                                      : 'teal.700',
-                                  transition: 'color 0.5s ease-in-out'
-                                }}
-                                transition='color 0.5s ease-in-out'>
-                                {tag[0]}
-                              </Tag>
-                            </a>
-                          </Tooltip>
-                        ))}
+                      {(state.showMore
+                        ? state.tags[state.currentIndex].data!.general.filter(
+                            (tag) => tag[1] > 0.5
+                          )
+                        : state.tags[state.currentIndex].data!.general.slice(
+                            0,
+                            10
+                          )
+                      ).map((tag) => (
+                        <Tooltip
+                          label={`${(tag[1] * 100).toFixed(1)}%`}
+                          aria-label='confidence'
+                          key={tag[0]}
+                          hasArrow>
+                          <a
+                            href={`https://danbooru.donmai.us/posts?tags=${tag[0]}`}
+                            key={tag[0]}>
+                            <Tag
+                              colorScheme='teal'
+                              key={tag[0]}
+                              m='1'
+                              cursor='pointer'
+                              _hover={{
+                                bg:
+                                  colorMode === 'light'
+                                    ? 'teal.50'
+                                    : 'teal.700',
+                                transition: 'color 0.5s ease-in-out'
+                              }}
+                              transition='color 0.5s ease-in-out'>
+                              {tag[0]}
+                            </Tag>
+                          </a>
+                        </Tooltip>
+                      ))}
+                      {state.tags[state.currentIndex].data!.general.length >
+                        10 &&
+                        state.tags[state.currentIndex].data!.general.filter(
+                          (tag) => tag[1] > 0.5
+                        ).length > 10 &&
+                        !state.showMore && (
+                          <Button
+                            size='xs'
+                            onClick={() => dispatch({ type: 'SHOW_MORE' })}
+                            m='1'>
+                            Show more...
+                          </Button>
+                        )}
                     </div>
                     <Divider />
-                    <Text>
-                      Character:{' '}
-                      {state.tags[state.currentIndex].data!.character}
-                    </Text>
+                    <Text>Character:</Text>
+                    <div>
+                      {state.tags[state.currentIndex].data!.character.length ===
+                      0
+                        ? 'Not sure...'
+                        : state.tags[state.currentIndex].data!.character.map(
+                            (character) => (
+                              <Tooltip
+                                label={`${(character[1] * 100).toFixed(1)}%`}
+                                aria-label='confidence'
+                                key={character[0]}
+                                hasArrow>
+                                <Tag
+                                  colorScheme='teal'
+                                  key={character[0]}
+                                  m='1'
+                                  _hover={{
+                                    bg:
+                                      colorMode === 'light'
+                                        ? 'teal.50'
+                                        : 'teal.700',
+                                    transition: 'color 0.5s ease-in-out'
+                                  }}
+                                  transition='color 0.5s ease-in-out'>
+                                  {character[0]}
+                                </Tag>
+                              </Tooltip>
+                            )
+                          )}
+                    </div>
                     <Divider />
                     <Text>
                       Rating: {state.tags[state.currentIndex].data!.rating}
@@ -344,7 +410,9 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
 export const getStaticProps = async () => {
   return {
     props: {
-      isDev: process.env.NODE_ENV === 'development'
+      isDev:
+        process.env.NODE_ENV === 'development' ||
+        process.env.DEVELOPMENT_MODE === '1'
     }
   }
 }

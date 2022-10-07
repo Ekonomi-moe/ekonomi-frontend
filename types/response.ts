@@ -13,7 +13,7 @@ export interface UploadImageResponse extends EveryResponses {
 
 export interface Tag {
   general: [string, number][]
-  character: string
+  character: [string, number][]
   rating: 'safe' | 'questionable' | 'explicit'
   image: string
   id: string

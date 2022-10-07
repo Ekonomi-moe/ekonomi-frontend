@@ -11,4 +11,5 @@ export interface TagsState {
   tags: TagStatus[]
   currentIndex: number
   isLoading: boolean
+  showMore: boolean
 }
