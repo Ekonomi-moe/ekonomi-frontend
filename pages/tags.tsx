@@ -216,9 +216,15 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                     <Image
                       fit='contain'
                       width='lg'
-                      src={`data:image/png;base64,${
-                        state.tags[state.currentIndex].data!.image
-                      }`}
+                      src={
+                        state.tags[state.currentIndex].data?.image.length === 0
+                          ? `https://img.ekonomi.moe/${
+                              state.tags[state.currentIndex].data!.id
+                            }.png`
+                          : `data:image/png;base64,${
+                              state.tags[state.currentIndex].data!.image
+                            }`
+                      }
                       filter={
                         state.tags[state.currentIndex].data!.blur
                           ? 'blur(0.75rem)'
