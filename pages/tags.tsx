@@ -218,7 +218,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                       width='lg'
                       src={
                         state.tags[state.currentIndex].data?.image === undefined
-                          ? `https://img.ekonomi.moe/${
+                          ? `https://${isDev ? 'devimg' : 'img'}.ekonomi.moe/${
                               state.tags[state.currentIndex].data!.id
                             }.png`
                           : `data:image/png;base64,${
