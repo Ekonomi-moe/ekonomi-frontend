@@ -96,9 +96,14 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
   React.useEffect(() => {
     if (!router.query.id) {
       router.push('/')
+      return
+    }
+    const ids = (router.query.id as string | undefined)?.split(',')
+    if (ids === undefined) {
+      router.push('/')
+      return
     }
     dispatch({ type: 'RESET' })
-    const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
       const url = `${
@@ -162,7 +167,8 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
   React.useEffect(() => {
     if (
       state.isLoading &&
-      state.tags.length >= (router.query.id as string).split(',').length
+      state.tags.length >=
+        (router.query.id as string | undefined)?.split(',')?.length
     ) {
       const index = state.tags.findIndex((tag) => !tag.error)
       if (index !== -1) {
