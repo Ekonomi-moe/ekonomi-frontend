@@ -42,6 +42,18 @@ const Index = ({ isDev }: { isDev: boolean }) => {
           method: 'POST'
         }
       )
+      if (!resp.ok) {
+        if (resp.status === 503) {
+          setError('The server is currently under maintenance or is down.')
+        } else if (resp.status === 413) {
+          setError('The file size is too large.')
+        } else if (resp.status === 419) {
+          setError("You're sending too many requests. Please try again later.")
+        }
+        throw new Error(
+          `Unknown error, but here's the http status code: ${resp.status}`
+        )
+      }
       const json: UploadImageResponse = await resp.json()
       if (json.status !== 200) {
         setError(json.message)

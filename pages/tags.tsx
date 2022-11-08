@@ -96,9 +96,14 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
   React.useEffect(() => {
     if (!router.query.id) {
       router.push('/')
+      return
+    }
+    const ids = (router.query.id as string | undefined)?.split(',')
+    if (ids === undefined) {
+      router.push('/')
+      return
     }
     dispatch({ type: 'RESET' })
-    const ids = (router.query.id as string).split(',')
     const fetchRetry = FetchRetry(fetch)
     ids.forEach(async (id) => {
       const url = `${
@@ -127,15 +132,30 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
           }
           dispatch({ type: 'ADD_TAG_STATUS', tag: result })
         } else {
-          if (resp.status === 404) {
+          if (resp.status === 503) {
             dispatch({
               type: 'ADD_TAG_STATUS',
-              tag: { error: new Error('Image not found') }
+              tag: {
+                error: 'The server is currently under maintenance or is down.'
+              }
+            })
+          } else if (resp.status === 404) {
+            dispatch({
+              type: 'ADD_TAG_STATUS',
+              tag: { error: 'Cannot find the matching image.' }
+            })
+          } else if (resp.status === 419) {
+            dispatch({
+              type: 'ADD_TAG_STATUS',
+              tag: {
+                error:
+                  "You're sending too many requests. Please try again later."
+              }
             })
           } else {
             dispatch({
               type: 'ADD_TAG_STATUS',
-              tag: { error: new Error(data.message) }
+              tag: { error: data.message }
             })
           }
         }
@@ -147,7 +167,8 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
   React.useEffect(() => {
     if (
       state.isLoading &&
-      state.tags.length >= (router.query.id as string).split(',').length
+      state.tags.length >=
+        (router.query.id as string | undefined)?.split(',')?.length
     ) {
       const index = state.tags.findIndex((tag) => !tag.error)
       if (index !== -1) {
@@ -183,7 +204,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
               {state.tags.map((tag, index) => (
                 <Tooltip
                   key={index}
-                  label={tag.error?.message ?? ''}
+                  label={tag.error ?? ''}
                   isDisabled={tag.error === undefined}
                   shouldWrapChildren>
                   <Button
@@ -200,10 +221,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
             </HStack>
             {state.tags[state.currentIndex]!.error ? (
               <Box p='4'>
-                <ErrorAlert>
-                  {state.tags[state.currentIndex]!.error.message ??
-                    'Unknown error. Please try again later.'}
-                </ErrorAlert>
+                <ErrorAlert>{state.tags[state.currentIndex]!.error}</ErrorAlert>
               </Box>
             ) : (
               <VStack>
@@ -218,7 +236,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
                       width='lg'
                       src={
                         state.tags[state.currentIndex].data?.image === undefined
-                          ? `https://img.ekonomi.moe/${
+                          ? `https://${isDev ? 'devimg' : 'img'}.ekonomi.moe/${
                               state.tags[state.currentIndex].data!.id
                             }.png`
                           : `data:image/png;base64,${

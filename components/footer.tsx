@@ -1,4 +1,4 @@
-import { Container, Center, Text, HStack } from '@chakra-ui/react'
+import { Container, Center, Text, Stack } from '@chakra-ui/react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -6,7 +6,7 @@ const Footer = () => (
   <footer>
     <Container maxW='container.lg' p='4'>
       <Center>
-        <HStack>
+        <Stack direction={{ base: 'column', md: 'row' }} alignItems='center'>
           <Text color='GrayText'>
             Made with ❤️ by{' '}
             <Link href='https://github.com/Ekonomi-moe'>
@@ -41,7 +41,7 @@ const Footer = () => (
             </Link>{' '}
             too!
           </Text>
-        </HStack>
+        </Stack>
       </Center>
     </Container>
   </footer>
