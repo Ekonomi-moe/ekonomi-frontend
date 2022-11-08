@@ -127,15 +127,30 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
           }
           dispatch({ type: 'ADD_TAG_STATUS', tag: result })
         } else {
-          if (resp.status === 404) {
+          if (resp.status === 503) {
             dispatch({
               type: 'ADD_TAG_STATUS',
-              tag: { error: new Error('Image not found') }
+              tag: {
+                error: 'The server is currently under maintenance or is down.'
+              }
+            })
+          } else if (resp.status === 404) {
+            dispatch({
+              type: 'ADD_TAG_STATUS',
+              tag: { error: 'Cannot find the matching image.' }
+            })
+          } else if (resp.status === 419) {
+            dispatch({
+              type: 'ADD_TAG_STATUS',
+              tag: {
+                error:
+                  "You're sending too many requests. Please try again later."
+              }
             })
           } else {
             dispatch({
               type: 'ADD_TAG_STATUS',
-              tag: { error: new Error(data.message) }
+              tag: { error: data.message }
             })
           }
         }
@@ -183,7 +198,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
               {state.tags.map((tag, index) => (
                 <Tooltip
                   key={index}
-                  label={tag.error?.message ?? ''}
+                  label={tag.error ?? ''}
                   isDisabled={tag.error === undefined}
                   shouldWrapChildren>
                   <Button
@@ -200,10 +215,7 @@ const Tags = ({ isDev }: { isDev: boolean }) => {
             </HStack>
             {state.tags[state.currentIndex]!.error ? (
               <Box p='4'>
-                <ErrorAlert>
-                  {state.tags[state.currentIndex]!.error.message ??
-                    'Unknown error. Please try again later.'}
-                </ErrorAlert>
+                <ErrorAlert>{state.tags[state.currentIndex]!.error}</ErrorAlert>
               </Box>
             ) : (
               <VStack>

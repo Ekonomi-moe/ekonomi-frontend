@@ -1,7 +1,7 @@
 import type { Tag } from './response'
 
 export interface TagStatus {
-  error?: Error
+  error?: string
   data?: Tag & {
     blur: boolean
   }
